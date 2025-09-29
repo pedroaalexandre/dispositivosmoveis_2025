@@ -1,4 +1,4 @@
-import { Text } from "react-native";
+import { Text, View, FlatList, StyleSheet, Button} from "react-native";
 
 export const Cart = ({ cartItems = [], removeItemFromCart }) => {
 
