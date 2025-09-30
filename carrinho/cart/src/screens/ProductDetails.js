@@ -26,7 +26,7 @@ export const ProductDetails = ({ route, addItemToCart }) => {
 	}, [productId]);
 
 	function onAddToCart() {
-		addItemToCart(product.id);
+		addItemToCart(product);
 	}
 
 	return (
