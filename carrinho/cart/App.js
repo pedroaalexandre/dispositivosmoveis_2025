@@ -12,17 +12,15 @@ const App = () => {
   const Stack = createNativeStackNavigator();
   const [itensCarrinho, setItensCarrinho] = useState([]);
 
-  const addItemToCart = (id) => {
-    const product = getProduct(id);
+  const addItemToCart = (product) => {
     setItensCarrinho((prevItems) => {
       const item = prevItems.find((item) => item.id == id);
       if (!item) {
         return [
           ...prevItems,
           {
-            id,
+            ...product,
             qty: 1,
-            product,
           },
         ];
       } else {
@@ -34,6 +32,10 @@ const App = () => {
         });
       }
     });
+  };
+
+  const removeItemFromCart = (id) => {
+    setItensCarrinho((prevItems) => prevItems.filter((item) => item.id !== id));
   };
 
   const getItemsCount = () => {
@@ -74,7 +76,7 @@ const App = () => {
             headerRight: () => <CartIcon navigation={navigation} getItemsCount={getItemsCount} />,
           })}
         >
-          {(props) => <Cart {...props} items={itensCarrinho} getTotalPrice={getTotalPrice} />}
+          {(props) => <Cart {...props} itensCarrinho={itensCarrinho} removeItemFromCart={removeItemFromCart} getTotalPrice={getTotalPrice} />}
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>

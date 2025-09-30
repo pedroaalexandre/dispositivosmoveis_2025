@@ -1,47 +1,104 @@
-import { Text, View, FlatList, StyleSheet, Button} from "react-native";
+import React from "react";
+import { View, Text, FlatList, Button, StyleSheet } from "react-native";
+import { numberFormat } from "../services/numberFormat";
 
-export const Cart = ({ cartItems = [], removeItemFromCart }) => {
+export const Cart = ({ itensCarrinho = [], removeItemFromCart }) => {
+  // Calcula o valor total dos itens no carrinho
+  const total = itensCarrinho.reduce((sum, item) => sum + (item.price || 0), 0);
 
-  // Calcula o total
-  const total = cartItems.reduce((sum, item) => sum + (item.price || 0), 0);
+  const renderItem = ({ item }) => (
+    <View style={styles.itemContainer}>
+      <View style={styles.itemInfo}>
+        <Text style={styles.itemName}>{item.name}</Text>
+        <Text style={styles.itemPrice}>{numberFormat(item.price)}</Text>
+      </View>
+      <Button
+        title="Remover"
+        color="red"
+        onPress={() => removeItemFromCart(item.id)}
+      />
+    </View>
+  );
 
   return (
-
     <View style={styles.container}>
-      <Text style={styles.title}>Carrinho de Compras</Text>
-      {cartItems.length === 0 ? (
-        <Text style={styles.emptyMessage}>Seu carrinho está vazio.</Text>
+      {itensCarrinho.length === 0 ? (
+        <Text style={styles.emptyCartText}>Seu carrinho está vazio.</Text>
       ) : (
-        <FlatList
-          data={cartItems}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <View style={styles.item}>
-              <Text style={styles.itemName}>{item.name}</Text>
-              <Text style={styles.itemPrice}>R$ {item.price.toFixed(2)}</Text>
-              <Button title="Remover" onPress={() => removeItemFromCart(item.id)} />
-            </View>
-          )}
-        />
+        <>
+          <FlatList
+            data={itensCarrinho}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id.toString()}
+            contentContainerStyle={styles.listContainer}
+          />
+          <View style={styles.totalContainer}>
+            <Text style={styles.totalText}>Total:</Text>
+            <Text style={styles.totalPrice}>{numberFormat(total)}</Text>
+          </View>
+        </>
       )}
-      <Text style={styles.total}>Total: R$ {total.toFixed(2)}</Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: "#fff" },
-  title: { fontSize: 24, fontWeight: "bold", marginBottom: 16 },
-  empty: { fontSize: 18, color: "#888", textAlign: "center", marginTop: 32 },
-  item: {
-    padding: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+  container: {
+    flex: 1,
+    backgroundColor: "#f5f5f5",
+  },
+  listContainer: {
+    paddingHorizontal: 8,
+    paddingVertical: 16,
+  },
+  emptyCartText: {
+    fontSize: 18,
+    textAlign: "center",
+    marginTop: 50,
+    color: "#888",
+  },
+  itemContainer: {
+    backgroundColor: "white",
+    padding: 16,
+    marginVertical: 8,
+    borderRadius: 8,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
   },
-  name: { fontSize: 16, flex: 1 },
-  price: { fontSize: 16, fontWeight: "bold", marginHorizontal: 8 },
-  total: { fontSize: 20, fontWeight: "bold", marginTop: 24, textAlign: "right" },
+  itemInfo: {
+    flex: 1,
+  },
+  itemName: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  itemPrice: {
+    fontSize: 14,
+    color: "#007acc",
+    marginTop: 4,
+  },
+  totalContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: "#ddd",
+    backgroundColor: "white",
+  },
+  totalText: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  totalPrice: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#28a745",
+  },
 });
